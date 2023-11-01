@@ -11,6 +11,7 @@ import com.hsh.parser.TSPNode;
 import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 
 /*
@@ -53,10 +54,14 @@ public class Beispiele {
         // 1 Weg = 1 Array mit Knoten ID´s
         // ExamplePath ist unten im Dokument definiert
         ArrayList<Evaluable> examples = new ArrayList<>();
-        ExamplePath examplePath1 = new ExamplePath(new int[]{1, 3, 5});
+        int[] arr = IntStream.range(1, 281).toArray();
+
+        ExamplePath examplePath1 = new ExamplePath(new int[]{1, 2, 3});
         ExamplePath examplePath2 = new ExamplePath(new int[]{1, 3, 10, 7});
+        ExamplePath examplePath3 = new ExamplePath(arr);
         examples.add(examplePath1);
         examples.add(examplePath2);
+        examples.add(examplePath3);
 
         // Übergabe von allen möglichen Lösungen
         // Das Ergebnis der Evaluierung wird an die ExamplePath angehängt und kann
