@@ -23,7 +23,6 @@ public class Main {
         }
         dataset = Parser.read(args[0]);
 
-
         Fitness fitness = new Fitness(dataset);
 
         WOA woa = new WOA(10, dataset);
