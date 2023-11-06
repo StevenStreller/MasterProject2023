@@ -1,39 +1,61 @@
 package woa;
 
-public class Vector<Num extends Number> {
+import java.util.ArrayList;
 
-    private Num x,y;
+public class Vector extends ArrayList<Double> {
 
-    public Vector(Num x, Num y) {
-        this.x = x;
-        this.y = y;
-    }
-    public Num getY() {
-        return y;
-    }
 
-    public Num getX() {
-        return x;
-    }
+
 
     public double getAbsoluteValue() {
-        return Math.sqrt(Math.pow((double) x, 2) + Math.pow((double) y, 2));
+        double value = 0;
+
+        for (Number number : this) {
+            value += Math.pow((double) number, 2);
+        }
+
+        return Math.sqrt(value);
     }
 
-    public Vector<Double> multiply(Vector<Num> v2) {
-        return new Vector<Double>((double) x * (double) v2.x, (double) y * (double) v2.y);
+    public Vector scalarMultiply(double scalar) {
+        Vector tmpVector = new Vector();
+        for (int i = 0; i < this.size(); i++) {
+            tmpVector.add(i, this.get(i) * scalar);
+        }
+
+        return tmpVector;
     }
 
-    public Vector<Double> subtract(Vector<Num> v2) {
-        return new Vector<Double>((double) x - (double) v2.x, (double) y - (double) v2.y);
+    public Vector scalarAddition(double scalar) {
+        Vector tmpVector = new Vector();
+        for (int i = 0; i < this.size(); i++) {
+            tmpVector.add(i, this.get(i) + scalar);
+        }
+
+        return tmpVector;
     }
 
-    public Vector<Double> multiply(double scalar) {
-        return new Vector<Double>( (double) x * scalar, (double) y * scalar);
+    public Vector multiply(Vector v2) {
+        Vector tmpVector = new Vector();
+        for (int i = 0; i < this.size(); i++) {
+            tmpVector.add(i, this.get(i) * v2.get(i));
+        }
+
+        return tmpVector;
     }
 
-    public Vector<Double> add(double scalar) {
-        return new Vector<Double>((double) x + scalar, (double) y + scalar);
+    public Vector subtract(Vector v2) {
+        Vector tmpVector = new Vector();
+        for (int i = 0; i < this.size(); i++) {
+            tmpVector.add(i, this.get(i) - v2.get(i));
+        }
+
+        return tmpVector;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 
 }
