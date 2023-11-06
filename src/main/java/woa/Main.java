@@ -25,6 +25,7 @@ public class Main {
 
         Fitness fitness = new Fitness(dataset);
 
-        WOA woa = new WOA(10, dataset);
+
+        WOA woa = new WOA(10, fitness);
     }
 }

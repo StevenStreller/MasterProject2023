@@ -1,5 +1,7 @@
 package woa;
 
+import com.hsh.Evaluable;
+import com.hsh.Fitness;
 import com.hsh.parser.Dataset;
 
 import java.util.ArrayList;
@@ -35,6 +37,16 @@ public class WOA {
         System.out.println(fitness.evaluate(getLeader().getP(), currentIter));
     }
 
-
-
+    private SearchAgent getLeader() {
+        int minDistance = Integer.MAX_VALUE;
+        int index = 0;
+        for (int i = 0; i < searchAgents.size(); i++) {
+            int distance = fitness.evaluate(searchAgents.get(i).getP(), currentIter).getFitness();
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    index = i;
+                }
+        }
+        return searchAgents.get(index);
+    }
 }
