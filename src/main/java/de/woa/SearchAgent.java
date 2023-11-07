@@ -3,13 +3,13 @@ package de.woa;
 import com.hsh.Evaluable;
 import com.hsh.Fitness;
 import com.hsh.parser.Node;
-import de.woa.enums.Route;
+import de.woa.enums.VectorDefinition;
 import de.woa.exceptions.DoubleInitializationNotPermittedException;
 import de.woa.exceptions.LeaderNotFoundException;
+import de.woa.exceptions.RandomNotFoundException;
+import woa.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 
 public class SearchAgent extends Evaluable {
 
@@ -17,11 +17,30 @@ public class SearchAgent extends Evaluable {
     private final Fitness fitness;
     private Node[] path;
 
+    // Doubles
     private double p = Math.random();
+    private double l = Math.random() * 2 - 1;
+
+    // Vectors
+    private HashMap<VectorDefinition, Vector> vectors = new HashMap<>();
+
 
     public SearchAgent(Fitness fitness) {
         this.fitness = fitness;
         shufflePath();
+        initializeVectors();
+    }
+
+    private void initializeVectors() {
+        vectors.put(VectorDefinition.r, Vector.generateRandomVector(fitness.getDataset().getSize()));
+        vectors.put(VectorDefinition.C, vectors.get(VectorDefinition.r).scalarMultiply(2d));
+        // System.out.println(vectors.get(VectorDefinition.r).get(0) + "* 2 = " + vectors.get(VectorDefinition.C).get(0));
+        double smallA = 2;
+        // vectors.put(VectorDefinition.A, TODO: Berechnung von A);
+    }
+
+    public void evaluate(int currentIteration, int totalIteration) {
+        // TODO: Evaluate a, A, C, l and p
     }
 
     /**
@@ -68,6 +87,14 @@ public class SearchAgent extends Evaluable {
         return searchAgents.get(index);
     }
 
+    public static SearchAgent getRandom() throws RandomNotFoundException {
+        SearchAgent random = searchAgents.get(new Random().nextInt(searchAgents.size()));
+        if (random == null) {
+            throw new RandomNotFoundException();
+        }
+        return random;
+    }
+
     public double getP() {
         return p;
     }
@@ -81,27 +108,34 @@ public class SearchAgent extends Evaluable {
         return pathIndex;
     }
 
-    public void getK(Route route) {
+
+    public double getK() throws LeaderNotFoundException, RandomNotFoundException {
         double k;
-        if (route == Route.LEADER) {
-            //TODO: Formel 3.3 muss implementiert werden
-            k = 3.3;
-        } else if (route == Route.RANDOM) {
-            //TODO: Formel 3.2 muss implementiert werden
-            k = 3.2;
+        if (getP() < 0.5) {
+            if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
+                SearchAgent leader = getLeader();
+                //TODO: k= (3.3) (LEADER)
+                k = -1;
+            } else {
+                SearchAgent random = getRandom();
+                // Gibt Funktion getRandom()
+                //TODO: k= (3.2) (RANDOM)
+                k = -1;
+            }
+        } else {
+            SearchAgent leader = getLeader();
+            // TODO: k= (3.2) (LEADER)
+            k = -1;
+        }
+        return k;
+    }
+
+    public void updateRoute() {
+        if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
+            // TODO (3.1)
+        } else {
+            // TODO (3.1)
         }
     }
 
-    public void updateRoute(Route route) {
-        if (route == Route.LEADER) {
-            //TODO hier ist A < 1 (3.1)
-        } else if (route == Route.RANDOM) {
-            //TODO hier ist A >= 1 (3.1)
-        }
-    }
-
-    public int getA() {
-        //TODO A muss noch implementiert werden
-        return -1;
-    }
 }
