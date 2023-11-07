@@ -12,7 +12,7 @@ import java.io.IOException;
 public class Main {
 
     private static final int WHALE_POPULATION = 10;
-    private static final int TOTAL_ITERATION = 1000;
+    private static final int TOTAL_ITERATION = 0;
     private static int currentIteration = 0;
 
     public static void main(String[] args) throws IOException, DoubleInitializationNotPermittedException, LeaderNotFoundException, RandomNotFoundException {
@@ -28,7 +28,6 @@ public class Main {
         Dataset dataset = Parser.read(pathToData);
         // Initialization of the fitness class
         Fitness fitness = new Fitness(dataset);
-
         // Initializes whalePopulation many SearchAgents
         SearchAgent.initializeSearchAgents(fitness, whalePopulation);
         SearchAgent leader;

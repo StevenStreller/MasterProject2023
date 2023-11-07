@@ -35,7 +35,7 @@ public class SearchAgent extends Evaluable {
         vectors.put(VectorDefinition.r, Vector.generateRandomVector(fitness.getDataset().getSize()));
         vectors.put(VectorDefinition.C, vectors.get(VectorDefinition.r).scalarMultiply(2d));
         double smallA = 2;
-        vectors.put(VectorDefinition.A, vectors.get(VectorDefinition.r).scalarMultiply(2)); //TODO: Formel falsch
+        vectors.put(VectorDefinition.A, vectors.get(VectorDefinition.r).scalarMultiply(2).scalarMultiply(smallA).scalarAddition(-smallA));
     }
 
     public void evaluate(int currentIteration, int totalIteration) {
@@ -107,12 +107,22 @@ public class SearchAgent extends Evaluable {
         return pathIndex;
     }
 
+    private double getD() throws LeaderNotFoundException {
+        Vector dLeader = new Vector();
+        Vector p = new Vector();
+        for (int i = 0; i < getLeader().getPath().size(); i++) {
+            dLeader.add((double) getLeader().getPath().get(i));
+            p.add((double) this.getPath().get(i));
+        }
+
+        return dLeader.multiply(this.vectors.get(VectorDefinition.C)).subtract(p).getAbsoluteValue();
+    }
+
 
     public double getK() throws LeaderNotFoundException, RandomNotFoundException {
         double k;
         if (getP() < 0.5) {
             if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
-                SearchAgent leader = getLeader();
                 //TODO: k= (3.3) (LEADER)
                 k = -1;
             } else {
