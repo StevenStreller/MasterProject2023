@@ -4,7 +4,18 @@ import java.util.ArrayList;
 
 public class Vector extends ArrayList<Double> {
 
-
+    /**
+     * Creates a vector with any number of randomized entries (
+     * @param entries
+     * @return
+     */
+    public static Vector generateRandomVector(int entries) {
+        Vector vector = new Vector();
+        for (int i = 0; i < entries; i++) {
+            vector.add(Math.random());
+        }
+        return vector;
+    }
 
 
     public double getAbsoluteValue() {
