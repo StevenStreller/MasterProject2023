@@ -34,7 +34,6 @@ public class SearchAgent extends Evaluable {
     private void initializeVectors() {
         vectors.put(VectorDefinition.r, Vector.generateRandomVector(fitness.getDataset().getSize()));
         vectors.put(VectorDefinition.C, vectors.get(VectorDefinition.r).scalarMultiply(2d));
-        // System.out.println(vectors.get(VectorDefinition.r).get(0) + "* 2 = " + vectors.get(VectorDefinition.C).get(0));
         double smallA = 2;
         vectors.put(VectorDefinition.A, vectors.get(VectorDefinition.r).scalarMultiply(2)); //TODO: Formel falsch
     }
