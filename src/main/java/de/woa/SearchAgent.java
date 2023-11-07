@@ -36,7 +36,7 @@ public class SearchAgent extends Evaluable {
         vectors.put(VectorDefinition.C, vectors.get(VectorDefinition.r).scalarMultiply(2d));
         // System.out.println(vectors.get(VectorDefinition.r).get(0) + "* 2 = " + vectors.get(VectorDefinition.C).get(0));
         double smallA = 2;
-        // vectors.put(VectorDefinition.A, TODO: Berechnung von A);
+        vectors.put(VectorDefinition.A, vectors.get(VectorDefinition.r).scalarMultiply(2)); //TODO: Formel falsch
     }
 
     public void evaluate(int currentIteration, int totalIteration) {
