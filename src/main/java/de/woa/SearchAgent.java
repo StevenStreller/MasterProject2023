@@ -39,7 +39,12 @@ public class SearchAgent extends Evaluable {
     }
 
     public void evaluate(int currentIteration, int totalIteration) {
-        // TODO: Evaluate a, A, C, l and p
+        double smallA = 2 -2 * ((double) currentIteration / totalIteration);
+        vectors.replace(VectorDefinition.r, Vector.generateRandomVector(fitness.getDataset().getSize())); // Muss r geupdatet werden?
+        vectors.replace(VectorDefinition.C, vectors.get(VectorDefinition.r).scalarMultiply(2d));
+        vectors.replace(VectorDefinition.A, vectors.get(VectorDefinition.r).scalarMultiply(2).scalarMultiply(smallA).scalarAddition(-smallA));
+        l = Math.random() * 2 - 1;
+        p = Math.random();
     }
 
     /**
@@ -115,16 +120,25 @@ public class SearchAgent extends Evaluable {
             p.add((double) this.getPath().get(i));
         }
 
-        return dLeader.multiply(this.vectors.get(VectorDefinition.C)).subtract(p).getAbsoluteValue();
+        return dLeader
+                //.multiply(this.vectors.get(VectorDefinition.C))
+                .subtract(p)
+                .getAbsoluteValue();
     }
 
 
     public double getK() throws LeaderNotFoundException, RandomNotFoundException {
-        double k;
+        int k;
         if (getP() < 0.5) {
             if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
-                //TODO: k= (3.3) (LEADER)
-                k = -1;
+                double b = 1; //TODO b muss noch herausgefunden werden
+                double j = 140; //TODO j muss herausgefunden werden
+
+                k = (int) Math.floor(Math.pow(Math.E, (b * l))*Math.cos(2*Math.PI*l) + j); // (3.3) with Leader
+                k += (int) Math.floor((Math.pow(Math.E, (b * l))*Math.cos(2*Math.PI*l) + j) / this.path.length); // (3.3) with Leader
+                k += 1; // (3.3) with Leader
+                System.out.println(getD());
+                //System.out.println(k);
             } else {
                 SearchAgent random = getRandom();
                 // Gibt Funktion getRandom()
