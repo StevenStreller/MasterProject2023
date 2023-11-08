@@ -121,13 +121,14 @@ public class SearchAgent extends Evaluable {
         }
 
         return dLeader
-                //.multiply(this.vectors.get(VectorDefinition.C))
+                .multiply(this.vectors.get(VectorDefinition.C))
                 .subtract(p)
                 .getAbsoluteValue();
     }
 
 
-    public double getK() throws LeaderNotFoundException, RandomNotFoundException {
+    public int getK() throws LeaderNotFoundException, RandomNotFoundException {
+        getD();
         int k;
         if (getP() < 0.5) {
             if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
@@ -137,12 +138,13 @@ public class SearchAgent extends Evaluable {
                 k = (int) Math.floor(Math.pow(Math.E, (b * l))*Math.cos(2*Math.PI*l) + j); // (3.3) with Leader
                 k += (int) Math.floor((Math.pow(Math.E, (b * l))*Math.cos(2*Math.PI*l) + j) / this.path.length); // (3.3) with Leader
                 k += 1; // (3.3) with Leader
-                System.out.println(getD());
-                //System.out.println(k);
+                //System.out.println("p < 0.5:" + k);
             } else {
                 SearchAgent random = getRandom();
-                // Gibt Funktion getRandom()
-                //TODO: k= (3.2) (RANDOM)
+                double j = 1; //TODO j muss herausgefunden werden
+                k = (int) j + (int) Math.floor(random.vectors.get(VectorDefinition.C).divide(random.vectors.get(VectorDefinition.A).scalarMultiply(random.path.length)).getAbsoluteValue()); // (3.2) (RANDOM)
+                k -= (int) (random.path.length * (double) ((int) j + (int) Math.floor(random.vectors.get(VectorDefinition.C).divide(random.vectors.get(VectorDefinition.A).scalarMultiply(random.path.length)).getAbsoluteValue()) / random.path.length)); // (3.2) (RANDOM)
+                k += 1; // (3.2) (RANDOM)
                 k = -1;
             }
         } else {
@@ -150,15 +152,26 @@ public class SearchAgent extends Evaluable {
             // TODO: k= (3.2) (LEADER)
             k = -1;
         }
+
         return k;
     }
 
-    public void updateRoute() {
-        if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
-            // TODO (3.1)
-        } else {
-            // TODO (3.1)
+    public void updateRoute() throws LeaderNotFoundException, RandomNotFoundException {
+        if (!(getLeader().hashCode() == this.hashCode())) {
+            if (vectors.get(VectorDefinition.A).getAbsoluteValue() >= 1) {
+                int j = new Random().nextInt(280);
+                int k = Math.abs(getRandom().getK());
+                Collections.swap(Arrays.asList(path), j, k);
+            } else {
+                int j = new Random().nextInt(280);
+                int k = Math.abs(getLeader().getK());
+                Collections.swap(Arrays.asList(path), j, k);
+            }
         }
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(new Object[]{this.path});
+    }
 }

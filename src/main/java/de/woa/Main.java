@@ -14,8 +14,8 @@ import java.util.Arrays;
 
 public class Main {
 
-    private static final int WHALE_POPULATION = 100;
-    private static final int TOTAL_ITERATION = 10;
+    private static final int WHALE_POPULATION = 10;
+    private static final int TOTAL_ITERATION = 100;
     private static int currentIteration = 0;
 
     public static void main(String[] args) throws IOException, DoubleInitializationNotPermittedException, LeaderNotFoundException, RandomNotFoundException {
@@ -34,8 +34,9 @@ public class Main {
         // Initializes whalePopulation many SearchAgents
         SearchAgent.initializeSearchAgents(fitness, whalePopulation);
         SearchAgent leader = null;
-        ArrayList<Evaluable> evaluables = new ArrayList<>();
+
         while (currentIteration <= TOTAL_ITERATION) {
+            ArrayList<Evaluable> evaluables = new ArrayList<>();
             leader = SearchAgent.getLeader(); // Kann vielleicht weg, weil macht ja nichts :-)
             for (SearchAgent searchAgent : SearchAgent.getSearchAgents()) {
 
@@ -46,7 +47,9 @@ public class Main {
             }
             //TODO: Update the current agent with the newly generated agent
             currentIteration++;
-
+            evaluables.add(leader);
+            fitness.evaluate(evaluables);
         }
+        fitness.finish();
     }
 }
