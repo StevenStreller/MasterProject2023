@@ -1,5 +1,6 @@
 package de.woa;
 
+import com.hsh.Evaluable;
 import com.hsh.Fitness;
 import com.hsh.parser.Dataset;
 import com.hsh.parser.Parser;
@@ -8,11 +9,13 @@ import de.woa.exceptions.LeaderNotFoundException;
 import de.woa.exceptions.RandomNotFoundException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main {
 
-    private static final int WHALE_POPULATION = 10;
-    private static final int TOTAL_ITERATION = 0;
+    private static final int WHALE_POPULATION = 100;
+    private static final int TOTAL_ITERATION = 10;
     private static int currentIteration = 0;
 
     public static void main(String[] args) throws IOException, DoubleInitializationNotPermittedException, LeaderNotFoundException, RandomNotFoundException {
@@ -30,7 +33,8 @@ public class Main {
         Fitness fitness = new Fitness(dataset);
         // Initializes whalePopulation many SearchAgents
         SearchAgent.initializeSearchAgents(fitness, whalePopulation);
-        SearchAgent leader;
+        SearchAgent leader = null;
+        ArrayList<Evaluable> evaluables = new ArrayList<>();
         while (currentIteration <= TOTAL_ITERATION) {
             leader = SearchAgent.getLeader(); // Kann vielleicht weg, weil macht ja nichts :-)
             for (SearchAgent searchAgent : SearchAgent.getSearchAgents()) {
@@ -42,7 +46,7 @@ public class Main {
             }
             //TODO: Update the current agent with the newly generated agent
             currentIteration++;
-        }
 
+        }
     }
 }
