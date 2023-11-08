@@ -64,6 +64,15 @@ public class Vector extends ArrayList<Double> {
         return tmpVector;
     }
 
+    public Vector divide(Vector v2) {
+        Vector tmpVector = new Vector();
+        for (int i = 0; i < this.size(); i++) {
+            tmpVector.add(i, this.get(i) / v2.get(i));
+        }
+
+        return tmpVector;
+    }
+
     @Override
     public String toString() {
         return super.toString();

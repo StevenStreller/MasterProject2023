@@ -135,8 +135,8 @@ public class SearchAgent extends Evaluable {
                 double b = 1; //TODO b muss noch herausgefunden werden
                 double j = 140; //TODO j muss herausgefunden werden
 
-                k = (int) Math.floor(Math.pow(Math.E, (b * l))*Math.cos(2*Math.PI*l) + j); // (3.3) with Leader
-                k += (int) Math.floor((Math.pow(Math.E, (b * l))*Math.cos(2*Math.PI*l) + j) / this.path.length); // (3.3) with Leader
+                k = (int) Math.floor(5*Math.pow(Math.E, (b * l))*Math.cos(2*Math.PI*l) + j); // (3.3) with Leader
+                k += (int) Math.floor((5*Math.pow(Math.E, (b * l))*Math.cos(2*Math.PI*l) + j) / this.path.length); // (3.3) with Leader
                 k += 1; // (3.3) with Leader
                 //System.out.println("p < 0.5:" + k);
             } else {
@@ -148,9 +148,11 @@ public class SearchAgent extends Evaluable {
                 k = -1;
             }
         } else {
-            SearchAgent leader = getLeader();
-            // TODO: k= (3.2) (LEADER)
-            k = -1;
+            double j = 1; //TODO j muss herausgefunden werden
+            k = (int) j + (int) Math.floor(vectors.get(VectorDefinition.C).divide(vectors.get(VectorDefinition.A).scalarMultiply(this.path.length)).getAbsoluteValue()); // (3.2) (LEADER)
+            k -= (int) (this.path.length * (double) ((int) j + (int) Math.floor(vectors.get(VectorDefinition.C).divide(vectors.get(VectorDefinition.A).scalarMultiply(this.path.length)).getAbsoluteValue()) / this.path.length)); // (3.2) (LEADER)
+            k += 1; // (3.2) (LEADER)
+            //System.out.println("p >= 0.5:" + k);
         }
 
         return k;
