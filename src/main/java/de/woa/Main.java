@@ -40,7 +40,7 @@ public class Main {
             leader = SearchAgent.getLeader(); // Kann vielleicht weg, weil macht ja nichts :-)
             for (SearchAgent searchAgent : SearchAgent.getSearchAgents()) {
 
-                searchAgent.evaluate(currentIteration, TOTAL_ITERATION);
+                searchAgent.evaluate(currentIteration, TOTAL_ITERATION, leader);
                 searchAgent.getK();
                 searchAgent.updateRoute(); // (3.1)
 

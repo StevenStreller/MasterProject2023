@@ -17,6 +17,9 @@ public class SearchAgent extends Evaluable {
     private final Fitness fitness;
     private Node[] path;
 
+    // Path size // number of cities
+    private int n;
+
     // Doubles
     private double p = Math.random();
     private double l = Math.random() * 2 - 1;
@@ -24,9 +27,11 @@ public class SearchAgent extends Evaluable {
     // Vectors
     private HashMap<VectorDefinition, Vector> vectors = new HashMap<>();
 
+    private SearchAgent leader;
 
     public SearchAgent(Fitness fitness) {
         this.fitness = fitness;
+        this.leader = this;
         shufflePath();
         initializeVectors();
     }
@@ -38,7 +43,8 @@ public class SearchAgent extends Evaluable {
         vectors.put(VectorDefinition.A, vectors.get(VectorDefinition.r).scalarMultiply(2).scalarMultiply(smallA).scalarAddition(-smallA));
     }
 
-    public void evaluate(int currentIteration, int totalIteration) {
+    public void evaluate(int currentIteration, int totalIteration, SearchAgent leader) {
+        this.leader = leader;
         double smallA = 2 -2 * ((double) currentIteration / totalIteration);
         vectors.replace(VectorDefinition.r, Vector.generateRandomVector(fitness.getDataset().getSize())); // Muss r geupdatet werden?
         vectors.replace(VectorDefinition.C, vectors.get(VectorDefinition.r).scalarMultiply(2d));
@@ -115,8 +121,8 @@ public class SearchAgent extends Evaluable {
     private double getD() throws LeaderNotFoundException {
         Vector dLeader = new Vector();
         Vector p = new Vector();
-        for (int i = 0; i < getLeader().getPath().size(); i++) {
-            dLeader.add((double) getLeader().getPath().get(i));
+        for (int i = 0; i < leader.getPath().size(); i++) {
+            dLeader.add((double) leader.getPath().get(i));
             p.add((double) this.getPath().get(i));
         }
 
@@ -128,15 +134,17 @@ public class SearchAgent extends Evaluable {
 
 
     public int getK() throws LeaderNotFoundException, RandomNotFoundException {
-        getD();
         int k;
         if (getP() < 0.5) {
             if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
                 double b = 1; //TODO b muss noch herausgefunden werden
                 double j = 140; //TODO j muss herausgefunden werden
 
-                k = (int) Math.floor(5*Math.pow(Math.E, (b * l))*Math.cos(2*Math.PI*l) + j); // (3.3) with Leader
-                k += (int) Math.floor((5*Math.pow(Math.E, (b * l))*Math.cos(2*Math.PI*l) + j) / this.path.length); // (3.3) with Leader
+                // TODO D muss herausgefunden werden??
+                double D = getD() / n;
+
+                k = (int) Math.floor(D*Math.pow(Math.E, (b * l))*Math.cos(2*Math.PI*l) + j); // (3.3) with Leader
+                k += (int) Math.floor((D*Math.pow(Math.E, (b * l))*Math.cos(2*Math.PI*l) + j) / this.path.length); // (3.3) with Leader
                 k += 1; // (3.3) with Leader
                 //System.out.println("p < 0.5:" + k);
             } else {
@@ -159,14 +167,14 @@ public class SearchAgent extends Evaluable {
     }
 
     public void updateRoute() throws LeaderNotFoundException, RandomNotFoundException {
-        if (!(getLeader().hashCode() == this.hashCode())) {
+        if (!(leader.hashCode() == this.hashCode())) {
             if (vectors.get(VectorDefinition.A).getAbsoluteValue() >= 1) {
                 int j = new Random().nextInt(280);
                 int k = Math.abs(getRandom().getK());
                 Collections.swap(Arrays.asList(path), j, k);
             } else {
                 int j = new Random().nextInt(280);
-                int k = Math.abs(getLeader().getK());
+                int k = Math.abs(leader.getK());
                 Collections.swap(Arrays.asList(path), j, k);
             }
         }
