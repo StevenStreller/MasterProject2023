@@ -45,7 +45,7 @@ public class SearchAgent extends Evaluable {
 
     public void evaluate(int currentIteration, int totalIteration, SearchAgent leader) {
         this.leader = leader;
-        double smallA = 2 -2 * ((double) currentIteration / totalIteration);
+        double smallA = 2 - 2 * ((double) currentIteration / totalIteration);
         vectors.replace(VectorDefinition.r, Vector.generateRandomVector(fitness.getDataset().getSize())); // Muss r geupdatet werden?
         vectors.replace(VectorDefinition.C, vectors.get(VectorDefinition.r).scalarMultiply(2d));
         vectors.replace(VectorDefinition.A, vectors.get(VectorDefinition.r).scalarMultiply(2).scalarMultiply(smallA).scalarAddition(-smallA));
@@ -133,49 +133,45 @@ public class SearchAgent extends Evaluable {
     }
 
 
-    public int getK() throws LeaderNotFoundException, RandomNotFoundException {
+    private int getK(int j, int n) throws LeaderNotFoundException, RandomNotFoundException {
         int k;
-        if (getP() < 0.5) {
-            if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
-                double b = 1; //TODO b muss noch herausgefunden werden
-                double j = 140; //TODO j muss herausgefunden werden
-
-                // TODO D muss herausgefunden werden??
-                double D = getD() / n;
-
-                k = (int) Math.floor(D*Math.pow(Math.E, (b * l))*Math.cos(2*Math.PI*l) + j); // (3.3) with Leader
-                k += (int) Math.floor((D*Math.pow(Math.E, (b * l))*Math.cos(2*Math.PI*l) + j) / this.path.length); // (3.3) with Leader
-                k += 1; // (3.3) with Leader
-                //System.out.println("p < 0.5:" + k);
-            } else {
-                SearchAgent random = getRandom();
-                double j = 1; //TODO j muss herausgefunden werden
-                k = (int) j + (int) Math.floor(random.vectors.get(VectorDefinition.C).divide(random.vectors.get(VectorDefinition.A).scalarMultiply(random.path.length)).getAbsoluteValue()); // (3.2) (RANDOM)
-                k -= (int) (random.path.length * (double) ((int) j + (int) Math.floor(random.vectors.get(VectorDefinition.C).divide(random.vectors.get(VectorDefinition.A).scalarMultiply(random.path.length)).getAbsoluteValue()) / random.path.length)); // (3.2) (RANDOM)
-                k += 1; // (3.2) (RANDOM)
-                k = -1;
-            }
+        if (getP() < 0.5 && vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
+            double b = 1; //TODO b muss noch herausgefunden werden
+            double D = getD() / this.n;
+            k = (int) Math.floor(D * Math.pow(Math.E, (b * l)) * Math.cos(2 * Math.PI * l) + j); // (3.3) with Leader
+            k /= (int) Math.floor((D * Math.pow(Math.E, (b * l)) * Math.cos(2 * Math.PI * l) + j) / n); // (3.3) with Leader
         } else {
-            double j = 1; //TODO j muss herausgefunden werden
-            k = (int) j + (int) Math.floor(vectors.get(VectorDefinition.C).divide(vectors.get(VectorDefinition.A).scalarMultiply(this.path.length)).getAbsoluteValue()); // (3.2) (LEADER)
-            k -= (int) (this.path.length * (double) ((int) j + (int) Math.floor(vectors.get(VectorDefinition.C).divide(vectors.get(VectorDefinition.A).scalarMultiply(this.path.length)).getAbsoluteValue()) / this.path.length)); // (3.2) (LEADER)
-            k += 1; // (3.2) (LEADER)
-            //System.out.println("p >= 0.5:" + k);
+            int x = j + (int) (vectors.get(VectorDefinition.C).divide(vectors.get(VectorDefinition.A)).scalarMultiply(n).getAbsoluteValue());
+            k = x - n * (x / n) + 1;
         }
-
-        return k;
+        return k - 1;
     }
 
     public void updateRoute() throws LeaderNotFoundException, RandomNotFoundException {
-        if (!(leader.hashCode() == this.hashCode())) {
-            if (vectors.get(VectorDefinition.A).getAbsoluteValue() >= 1) {
-                int j = new Random().nextInt(280);
-                int k = Math.abs(getRandom().getK());
-                Collections.swap(Arrays.asList(path), j, k);
+        SearchAgent leader = SearchAgent.getLeader();
+        if (!this.equals(leader)) {
+            if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
+                for (int j = 0; j < path.length; j++) {
+                    int k = getK(j, path.length);
+                    int id = getLeader().path[k].getId();
+                    for (int i = 0; i < path.length; i++) {
+                        if (id == path[i].getId()) {
+                            Collections.swap(Arrays.asList(path), j, i);
+                            break;
+                        }
+                    }
+                }
             } else {
-                int j = new Random().nextInt(280);
-                int k = Math.abs(leader.getK());
-                Collections.swap(Arrays.asList(path), j, k);
+                for (int j = 0; j < path.length; j++) {
+                    int k = getK(j, path.length);
+                    int id = getRandom().path[k].getId();
+                    for (int i = 0; i < path.length; i++) {
+                        if (id == path[i].getId()) {
+                            Collections.swap(Arrays.asList(path), j, i);
+                            break;
+                        }
+                    }
+                }
             }
         }
     }

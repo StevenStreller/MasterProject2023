@@ -1,6 +1,5 @@
 package de.woa;
 
-import com.hsh.Evaluable;
 import com.hsh.Fitness;
 import com.hsh.parser.Dataset;
 import com.hsh.parser.Parser;
@@ -9,14 +8,13 @@ import de.woa.exceptions.LeaderNotFoundException;
 import de.woa.exceptions.RandomNotFoundException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+
 
 public class Main {
 
     private static final int WHALE_POPULATION = 10;
-    private static final int TOTAL_ITERATION = 100;
-    private static int currentIteration = 0;
+    private static final int TOTAL_ITERATION = 200;
+    private static int currentIteration = 1;
 
     public static void main(String[] args) throws IOException, DoubleInitializationNotPermittedException, LeaderNotFoundException, RandomNotFoundException {
         if (args.length != 1) {
@@ -34,22 +32,29 @@ public class Main {
         // Initializes whalePopulation many SearchAgents
         SearchAgent.initializeSearchAgents(fitness, whalePopulation);
         SearchAgent leader = null;
-
-        while (currentIteration <= TOTAL_ITERATION) {
-            ArrayList<Evaluable> evaluables = new ArrayList<>();
+        for (SearchAgent searchAgent : SearchAgent.getSearchAgents()) {
+            System.out.println(searchAgent.getPath());
+        }
+        System.out.println("-----------------------");
+        while (currentIteration < TOTAL_ITERATION) {
             leader = SearchAgent.getLeader(); // Kann vielleicht weg, weil macht ja nichts :-)
             for (SearchAgent searchAgent : SearchAgent.getSearchAgents()) {
 
                 searchAgent.evaluate(currentIteration, TOTAL_ITERATION, leader);
-                searchAgent.getK();
                 searchAgent.updateRoute(); // (3.1)
+
+                fitness.evaluate(searchAgent, currentIteration);
 
             }
             //TODO: Update the current agent with the newly generated agent
             currentIteration++;
-            evaluables.add(leader);
-            fitness.evaluate(evaluables);
         }
+
+        for (SearchAgent searchAgent : SearchAgent.getSearchAgents()) {
+//            System.out.println(searchAgent.getPath());
+//            System.out.println(searchAgent.getFitness());
+        }
+
         fitness.finish();
     }
 }
