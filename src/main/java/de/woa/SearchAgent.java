@@ -7,7 +7,6 @@ import de.woa.enums.VectorDefinition;
 import de.woa.exceptions.DoubleInitializationNotPermittedException;
 import de.woa.exceptions.LeaderNotFoundException;
 import de.woa.exceptions.RandomNotFoundException;
-import woa.Vector;
 
 import java.util.*;
 
@@ -25,7 +24,7 @@ public class SearchAgent extends Evaluable {
     private double l = Math.random() * 2 - 1;
 
     // Vectors
-    private HashMap<VectorDefinition, Vector> vectors = new HashMap<>();
+    private final HashMap<VectorDefinition, Vector> vectors = new HashMap<>();
 
     private SearchAgent leader;
 
@@ -34,6 +33,7 @@ public class SearchAgent extends Evaluable {
         this.leader = this;
         shufflePath();
         initializeVectors();
+        this.n = path.length;
     }
 
     private void initializeVectors() {
@@ -137,9 +137,15 @@ public class SearchAgent extends Evaluable {
         int k;
         if (getP() < 0.5 && vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
             double b = 1; //TODO b muss noch herausgefunden werden
-            double D = getD() / this.n;
+            double D = getD() / n;
             k = (int) Math.floor(D * Math.pow(Math.E, (b * l)) * Math.cos(2 * Math.PI * l) + j); // (3.3) with Leader
-            k /= (int) Math.floor((D * Math.pow(Math.E, (b * l)) * Math.cos(2 * Math.PI * l) + j) / n); // (3.3) with Leader
+            k += (int) Math.floor((D * Math.pow(Math.E, (b * l)) * Math.cos(2 * Math.PI * l) + j) / n); // (3.3) with Leader
+            k += 1;
+            if (k > path.length) {
+                System.out.println("RIP: " + (path.length - k));
+                k = k + (path.length - k);
+            }
+            k = Math.abs(k);
         } else {
             int x = j + (int) (vectors.get(VectorDefinition.C).divide(vectors.get(VectorDefinition.A)).scalarMultiply(n).getAbsoluteValue());
             k = x - n * (x / n) + 1;
@@ -148,11 +154,10 @@ public class SearchAgent extends Evaluable {
     }
 
     public void updateRoute() throws LeaderNotFoundException, RandomNotFoundException {
-        SearchAgent leader = SearchAgent.getLeader();
         if (!this.equals(leader)) {
             if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
                 for (int j = 0; j < path.length; j++) {
-                    int k = getK(j, path.length);
+                    int k = getK(j);
                     int id = getLeader().path[k].getId();
                     for (int i = 0; i < path.length; i++) {
                         if (id == path[i].getId()) {
@@ -163,7 +168,7 @@ public class SearchAgent extends Evaluable {
                 }
             } else {
                 for (int j = 0; j < path.length; j++) {
-                    int k = getK(j, path.length);
+                    int k = getK(j);
                     int id = getRandom().path[k].getId();
                     for (int i = 0; i < path.length; i++) {
                         if (id == path[i].getId()) {

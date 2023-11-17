@@ -1,4 +1,4 @@
-package woa;
+package de.woa;
 
 import java.util.ArrayList;
 
