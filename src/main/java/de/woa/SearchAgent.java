@@ -118,7 +118,7 @@ public class SearchAgent extends Evaluable {
         return pathIndex;
     }
 
-    private double getD() throws LeaderNotFoundException {
+    private double getD() {
         Vector dLeader = new Vector();
         Vector p = new Vector();
         for (int i = 0; i < leader.getPath().size(); i++) {
@@ -133,7 +133,7 @@ public class SearchAgent extends Evaluable {
     }
 
 
-    private int getK(int j, int n) throws LeaderNotFoundException, RandomNotFoundException {
+    private int getK(int j) {
         int k;
         if (getP() < 0.5 && vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
             double b = 1; //TODO b muss noch herausgefunden werden
