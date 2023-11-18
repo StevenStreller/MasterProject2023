@@ -17,7 +17,7 @@ public class SearchAgent extends Evaluable {
     private Node[] path;
 
     // Path size // number of cities
-    private int n;
+    private final int n;
 
     // Doubles
     private double p = Math.random();
@@ -141,15 +141,16 @@ public class SearchAgent extends Evaluable {
             k = (int) Math.floor(D * Math.pow(Math.E, (b * l)) * Math.cos(2 * Math.PI * l) + j); // (3.3) with Leader
             k += (int) Math.floor((D * Math.pow(Math.E, (b * l)) * Math.cos(2 * Math.PI * l) + j) / n); // (3.3) with Leader
             k += 1;
-            if (k > path.length) {
-                System.out.println("RIP: " + (path.length - k));
-                k = k + (path.length - k);
-            }
             k = Math.abs(k);
         } else {
             int x = j + (int) (vectors.get(VectorDefinition.C).divide(vectors.get(VectorDefinition.A)).scalarMultiply(n).getAbsoluteValue());
             k = x - n * (x / n) + 1;
         }
+
+        if (k < 1 || k > n) {
+            throw new IndexOutOfBoundsException("The value of the variable K is not in the interval [1," + n + "].");
+        }
+
         return k - 1;
     }
 
