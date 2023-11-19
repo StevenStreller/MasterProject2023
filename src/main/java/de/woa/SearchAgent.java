@@ -126,10 +126,10 @@ public class SearchAgent extends Evaluable {
             p.add((double) this.getPath().get(i));
         }
 
-        return dLeader
+        return (dLeader
                 .multiply(this.vectors.get(VectorDefinition.C))
                 .subtract(p)
-                .getAbsoluteValue();
+                .getAbsoluteValue() / n) / n;
     }
 
 
@@ -137,18 +137,25 @@ public class SearchAgent extends Evaluable {
         int k;
         if (getP() < 0.5 && vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
             double b = 1; //TODO b muss noch herausgefunden werden
-            double D = getD() / n;
-            k = (int) Math.floor(D * Math.pow(Math.E, (b * l)) * Math.cos(2 * Math.PI * l) + j); // (3.3) with Leader
-            k += (int) Math.floor((D * Math.pow(Math.E, (b * l)) * Math.cos(2 * Math.PI * l) + j) / n); // (3.3) with Leader
+            double D = getD();
+            double innerTerm = D * Math.pow(Math.E, (b * l)) * Math.cos(2 * Math.PI * l) + j;
+            k = (int) Math.floor(innerTerm); // (3.3) with Leader
+            k += (int) Math.floor((innerTerm) / n); // (3.3) with Leader
             k += 1;
-            k = Math.abs(k);
+
         } else {
             int x = j + (int) (vectors.get(VectorDefinition.C).divide(vectors.get(VectorDefinition.A)).scalarMultiply(n).getAbsoluteValue());
             k = x - n * (x / n) + 1;
         }
-
+        k = Math.abs(k);
         if (k < 1 || k > n) {
-            throw new IndexOutOfBoundsException("The value of the variable K is not in the interval [1," + n + "].");
+            try {
+                throw new IndexOutOfBoundsException("The value of the variable K ("+ k +") is not in the interval [1," + n + "].");
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println(e.getMessage());
+                k = Math.max(k, 1);
+                k = Math.min(k, n);
+            }
         }
 
         return k - 1;
