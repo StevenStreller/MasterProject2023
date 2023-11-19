@@ -153,7 +153,9 @@ public class SearchAgent extends Evaluable {
                     int id = best.getPath().get(k);
                     for (int i = 0; i < path.length; i++) {
                         if (id == path[i].getId()) {
-                            Collections.swap(Arrays.asList(path), j, i);
+                            if (isDistanceShorterWithSwap(i, j)) {
+                                Collections.swap(Arrays.asList(path), j, i);
+                            }
                             break;
                         }
                     }
