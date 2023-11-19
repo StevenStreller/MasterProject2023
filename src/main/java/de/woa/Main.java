@@ -12,47 +12,47 @@ import java.io.IOException;
 
 public class Main {
 
-    private static final int WHALE_POPULATION = 10;
-    private static final int TOTAL_ITERATION = 200;
-    private static int currentIteration = 1;
+    private static int WHALE_POPULATION = 10;
+    private static int TOTAL_ITERATION = 150;
 
     public static void main(String[] args) throws IOException, DoubleInitializationNotPermittedException, LeaderNotFoundException, RandomNotFoundException {
-        if (args.length != 1) {
+        if (!(args.length >= 1)) {
             throw new IllegalArgumentException("Please set the path to the *.tsp");
-        } else {
-            runWhaleOptimizationAlgorithm(args[0], WHALE_POPULATION);
         }
+        if (args.length >= 2) {
+            TOTAL_ITERATION = Integer.parseInt(args[1]);
+        }
+        if (args.length >= 3) {
+            WHALE_POPULATION = Integer.parseInt(args[2]);
+        }
+        runWhaleOptimizationAlgorithm(args[0]);
     }
 
-    public static void runWhaleOptimizationAlgorithm(String pathToData, int whalePopulation) throws IOException, DoubleInitializationNotPermittedException, LeaderNotFoundException, RandomNotFoundException {
+    public static void runWhaleOptimizationAlgorithm(String pathToData) throws IOException, DoubleInitializationNotPermittedException, LeaderNotFoundException, RandomNotFoundException {
         System.out.println("\n------------------Whale Optimization Algorithm (WOA)------------------");
+        System.out.println("Total iterations: " + TOTAL_ITERATION + " \\ " + "Whale Population: " + WHALE_POPULATION);
+        System.out.println("Note: You can change the number of iterations and the whale population using the second <int> and third <int> argument.");
         Dataset dataset = Parser.read(pathToData);
         // Initialization of the fitness class
         Fitness fitness = new Fitness(dataset);
         // Initializes whalePopulation many SearchAgents
-        SearchAgent.initializeSearchAgents(fitness, whalePopulation);
-        SearchAgent leader = null;
+        SearchAgent.initializeSearchAgents(fitness, WHALE_POPULATION);
+        SearchAgent leader;
         for (SearchAgent searchAgent : SearchAgent.getSearchAgents()) {
             System.out.println(searchAgent.getPath());
         }
         System.out.println("-----------------------");
-        while (currentIteration < TOTAL_ITERATION) {
+        for (int i = 0; i < TOTAL_ITERATION; i++) {
             leader = SearchAgent.getLeader(); // Kann vielleicht weg, weil macht ja nichts :-)
             for (SearchAgent searchAgent : SearchAgent.getSearchAgents()) {
 
-                searchAgent.evaluate(currentIteration, TOTAL_ITERATION, leader);
+                searchAgent.evaluate(i, TOTAL_ITERATION, leader);
                 searchAgent.updateRoute(); // (3.1)
 
-                fitness.evaluate(searchAgent, currentIteration);
+                fitness.evaluate(searchAgent, i);
 
             }
-            //TODO: Update the current agent with the newly generated agent
-            currentIteration++;
-        }
 
-        for (SearchAgent searchAgent : SearchAgent.getSearchAgents()) {
-//            System.out.println(searchAgent.getPath());
-//            System.out.println(searchAgent.getFitness());
         }
 
         fitness.finish();
