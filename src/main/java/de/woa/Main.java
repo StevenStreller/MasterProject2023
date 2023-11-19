@@ -1,5 +1,6 @@
 package de.woa;
 
+import com.hsh.Evaluable;
 import com.hsh.Fitness;
 import com.hsh.parser.Dataset;
 import com.hsh.parser.Parser;
@@ -43,16 +44,16 @@ public class Main {
         }
         System.out.println("-----------------------");
         for (int i = 0; i < TOTAL_ITERATION; i++) {
-            leader = SearchAgent.getLeader(); // Kann vielleicht weg, weil macht ja nichts :-)
-            for (SearchAgent searchAgent : SearchAgent.getSearchAgents()) {
-
-                searchAgent.evaluate(i, TOTAL_ITERATION, leader);
-                searchAgent.updateRoute(); // (3.1)
-
-                fitness.evaluate(searchAgent, i);
-
+            if (i == 0) {
+                SearchAgent.setLeader(SearchAgent.getRandom()) ;
             }
 
+            for (SearchAgent searchAgent : SearchAgent.getSearchAgents()) {
+                searchAgent.evaluate(i, TOTAL_ITERATION);
+                searchAgent.updateRoute(); // (3.1)
+                fitness.evaluate(searchAgent, i);
+            }
+            SearchAgent.setLeader(fitness.getBest(i));
         }
 
         fitness.finish();

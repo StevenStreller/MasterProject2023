@@ -5,7 +5,6 @@ import com.hsh.Fitness;
 import com.hsh.parser.Node;
 import de.woa.enums.VectorDefinition;
 import de.woa.exceptions.DoubleInitializationNotPermittedException;
-import de.woa.exceptions.LeaderNotFoundException;
 import de.woa.exceptions.RandomNotFoundException;
 
 import java.util.*;
@@ -26,14 +25,20 @@ public class SearchAgent extends Evaluable {
     // Vectors
     private final HashMap<VectorDefinition, Vector> vectors = new HashMap<>();
 
-    private SearchAgent leader;
+    private static Evaluable best;
 
     public SearchAgent(Fitness fitness) {
         this.fitness = fitness;
-        this.leader = this;
+
         shufflePath();
         initializeVectors();
         this.n = path.length;
+    }
+
+    protected static void setLeader(Evaluable best) {
+        SearchAgent.best = best;
+        System.out.println("Refresh Leader");
+
     }
 
     private void initializeVectors() {
@@ -43,8 +48,7 @@ public class SearchAgent extends Evaluable {
         vectors.put(VectorDefinition.A, vectors.get(VectorDefinition.r).scalarMultiply(2).scalarMultiply(smallA).scalarAddition(-smallA));
     }
 
-    public void evaluate(int currentIteration, int totalIteration, SearchAgent leader) {
-        this.leader = leader;
+    public void evaluate(int currentIteration, int totalIteration) {
         double smallA = 2 - 2 * ((double) currentIteration / totalIteration);
         vectors.replace(VectorDefinition.r, Vector.generateRandomVector(fitness.getDataset().getSize())); // Muss r geupdatet werden?
         vectors.replace(VectorDefinition.C, vectors.get(VectorDefinition.r).scalarMultiply(2d));
@@ -76,26 +80,6 @@ public class SearchAgent extends Evaluable {
         return searchAgents;
     }
 
-    /**
-     * @return the SearchAgent with the shortest route
-     * @throws LeaderNotFoundException Throws an exception if no leader (i.e. a SearchAgent with a short length) is found in the ArrayList.
-     */
-    public static SearchAgent getLeader() throws LeaderNotFoundException {
-        int index = -1;
-        int lowestFitness = Integer.MAX_VALUE;
-        for (int i = 0; i < searchAgents.size(); i++) {
-            int currentFitness = searchAgents.get(i).fitness.evaluate(searchAgents.get(i).getPath(), 0).getFitness();
-
-            if ((lowestFitness > currentFitness) && (currentFitness != -1)) {
-                lowestFitness = currentFitness;
-                index = i;
-            }
-        }
-        if (index == -1) {
-            throw new LeaderNotFoundException();
-        }
-        return searchAgents.get(index);
-    }
 
     public static SearchAgent getRandom() throws RandomNotFoundException {
         SearchAgent random = searchAgents.get(new Random().nextInt(searchAgents.size()));
@@ -121,8 +105,8 @@ public class SearchAgent extends Evaluable {
     private double getD() {
         Vector dLeader = new Vector();
         Vector p = new Vector();
-        for (int i = 0; i < leader.getPath().size(); i++) {
-            dLeader.add((double) leader.getPath().get(i));
+        for (int i = 0; i < best.getPath().size(); i++) {
+            dLeader.add((double) best.getPath().get(i));
             p.add((double) this.getPath().get(i));
         }
 
@@ -161,12 +145,14 @@ public class SearchAgent extends Evaluable {
         return k - 1;
     }
 
-    public void updateRoute() throws LeaderNotFoundException, RandomNotFoundException {
-        if (!this.equals(leader)) {
+    public void updateRoute() throws RandomNotFoundException {
+        if (this.getPath().hashCode() != best.getPath().hashCode()) {
             if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
+                System.out.println(this.getPath());
                 for (int j = 0; j < path.length; j++) {
                     int k = getK(j);
-                    int id = getLeader().path[k].getId();
+                    // @TODO: Irgendwo hier ist der Bug. Die Elemente der Liste werden nicht vertauscht.
+                    int id = best.getPath().get(k);
                     for (int i = 0; i < path.length; i++) {
                         if (id == path[i].getId()) {
                             Collections.swap(Arrays.asList(path), j, i);
@@ -174,6 +160,8 @@ public class SearchAgent extends Evaluable {
                         }
                     }
                 }
+                System.out.println(this.getPath());
+                System.out.println("WALE FERTIG");
             } else {
                 for (int j = 0; j < path.length; j++) {
                     int k = getK(j);
@@ -185,6 +173,7 @@ public class SearchAgent extends Evaluable {
                         }
                     }
                 }
+
             }
         }
     }
