@@ -37,7 +37,7 @@ public class SearchAgent extends Evaluable {
 
     protected static void setLeader(Evaluable best) {
         SearchAgent.best = best;
-        System.out.println("Refresh Leader");
+
 
     }
 
@@ -148,10 +148,8 @@ public class SearchAgent extends Evaluable {
     public void updateRoute() throws RandomNotFoundException {
         if (this.getPath().hashCode() != best.getPath().hashCode()) {
             if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
-                System.out.println(this.getPath());
                 for (int j = 0; j < path.length; j++) {
                     int k = getK(j);
-                    // @TODO: Irgendwo hier ist der Bug. Die Elemente der Liste werden nicht vertauscht.
                     int id = best.getPath().get(k);
                     for (int i = 0; i < path.length; i++) {
                         if (id == path[i].getId()) {
@@ -160,22 +158,51 @@ public class SearchAgent extends Evaluable {
                         }
                     }
                 }
-                System.out.println(this.getPath());
-                System.out.println("WALE FERTIG");
             } else {
                 for (int j = 0; j < path.length; j++) {
                     int k = getK(j);
                     int id = getRandom().path[k].getId();
                     for (int i = 0; i < path.length; i++) {
                         if (id == path[i].getId()) {
-                            Collections.swap(Arrays.asList(path), j, i);
+                            if (isDistanceShorterWithSwap(i,j)) {
+                                Collections.swap(Arrays.asList(path), j, i);
+                            }
                             break;
                         }
                     }
                 }
-
             }
         }
+    }
+
+    private double calcDistance(Node[] nodes, int index) {
+        return calculateDistance(nodes, index, nodes[index]);
+    }
+
+    private double calcDistance(Node[] nodes, int index, int newNeighbor) {
+        return calculateDistance(nodes, index, nodes[newNeighbor]);
+    }
+
+    private double calculateDistance(Node[] nodes, int index, Node node) {
+        Node leftNeighbor;
+        Node rightNeighbor;
+        if (index == 0) {
+            leftNeighbor = nodes[nodes.length - 1];
+            rightNeighbor = nodes[index + 1];
+        } else if (index == nodes.length - 1) {
+            leftNeighbor = nodes[nodes.length - 2];
+            rightNeighbor = nodes[0];
+        } else {
+            leftNeighbor = nodes[nodes.length - 2];
+            rightNeighbor = nodes[index + 1];
+        }
+
+        return leftNeighbor.distance(node) + node.distance(rightNeighbor);
+    }
+
+    private boolean isDistanceShorterWithSwap(int i, int j) {
+        return calcDistance(path, i) < calcDistance(path, i , j);
+
     }
 
     @Override

@@ -1,7 +1,6 @@
 package de.woa;
 
 import org.junit.jupiter.api.Test;
-import woa.Vector;
 
 import java.util.Random;
 

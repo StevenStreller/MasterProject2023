@@ -1,11 +1,10 @@
 package de.woa;
 
-import com.hsh.Evaluable;
+
 import com.hsh.Fitness;
 import com.hsh.parser.Dataset;
 import com.hsh.parser.Parser;
 import de.woa.exceptions.DoubleInitializationNotPermittedException;
-import de.woa.exceptions.LeaderNotFoundException;
 import de.woa.exceptions.RandomNotFoundException;
 
 import java.io.IOException;
@@ -16,7 +15,7 @@ public class Main {
     private static int WHALE_POPULATION = 10;
     private static int TOTAL_ITERATION = 150;
 
-    public static void main(String[] args) throws IOException, DoubleInitializationNotPermittedException, LeaderNotFoundException, RandomNotFoundException {
+    public static void main(String[] args) throws IOException, DoubleInitializationNotPermittedException, RandomNotFoundException {
         if (!(args.length >= 1)) {
             throw new IllegalArgumentException("Please set the path to the *.tsp");
         }
@@ -29,7 +28,7 @@ public class Main {
         runWhaleOptimizationAlgorithm(args[0]);
     }
 
-    public static void runWhaleOptimizationAlgorithm(String pathToData) throws IOException, DoubleInitializationNotPermittedException, LeaderNotFoundException, RandomNotFoundException {
+    public static void runWhaleOptimizationAlgorithm(String pathToData) throws IOException, DoubleInitializationNotPermittedException, RandomNotFoundException {
         System.out.println("\n------------------Whale Optimization Algorithm (WOA)------------------");
         System.out.println("Total iterations: " + TOTAL_ITERATION + " \\ " + "Whale Population: " + WHALE_POPULATION);
         System.out.println("Note: You can change the number of iterations and the whale population using the second <int> and third <int> argument.");
@@ -38,10 +37,6 @@ public class Main {
         Fitness fitness = new Fitness(dataset);
         // Initializes whalePopulation many SearchAgents
         SearchAgent.initializeSearchAgents(fitness, WHALE_POPULATION);
-        SearchAgent leader;
-        for (SearchAgent searchAgent : SearchAgent.getSearchAgents()) {
-            System.out.println(searchAgent.getPath());
-        }
         System.out.println("-----------------------");
         for (int i = 0; i < TOTAL_ITERATION; i++) {
             if (i == 0) {
@@ -55,7 +50,6 @@ public class Main {
             }
             SearchAgent.setLeader(fitness.getBest(i));
         }
-
         fitness.finish();
     }
 }
