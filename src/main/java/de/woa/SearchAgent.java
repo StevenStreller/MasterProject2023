@@ -4,14 +4,12 @@ import com.hsh.Evaluable;
 import com.hsh.Fitness;
 import com.hsh.parser.Node;
 import de.woa.enums.VectorDefinition;
-import de.woa.exceptions.DoubleInitializationNotPermittedException;
 import de.woa.exceptions.RandomNotFoundException;
 
 import java.util.*;
 
 public class SearchAgent extends Evaluable {
 
-    private static final ArrayList<SearchAgent> searchAgents = new ArrayList<>();
     private final Fitness fitness;
     private Node[] path;
 
@@ -37,8 +35,6 @@ public class SearchAgent extends Evaluable {
 
     protected static void setLeader(Evaluable best) {
         SearchAgent.best = best;
-
-
     }
 
     private void initializeVectors() {
@@ -63,30 +59,6 @@ public class SearchAgent extends Evaluable {
     private void shufflePath() {
         this.path = fitness.getDataset().getNodes();
         Collections.shuffle(Arrays.asList(path));
-    }
-
-
-    public static void initializeSearchAgents(Fitness fitness, int population) throws DoubleInitializationNotPermittedException {
-        if (!searchAgents.isEmpty()) {
-            throw new DoubleInitializationNotPermittedException();
-        } else {
-            for (int i = 0; i < population; i++) {
-                searchAgents.add(new SearchAgent(fitness));
-            }
-        }
-    }
-
-    public static ArrayList<SearchAgent> getSearchAgents() {
-        return searchAgents;
-    }
-
-
-    public static SearchAgent getRandom() throws RandomNotFoundException {
-        SearchAgent random = searchAgents.get(new Random().nextInt(searchAgents.size()));
-        if (random == null) {
-            throw new RandomNotFoundException();
-        }
-        return random;
     }
 
     public double getP() {
@@ -145,7 +117,7 @@ public class SearchAgent extends Evaluable {
         return k - 1;
     }
 
-    public void updateRoute() throws RandomNotFoundException {
+    public void updateRoute(SearchAgent random) {
         if (this.getPath().hashCode() != best.getPath().hashCode()) {
             if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
                 for (int j = 0; j < path.length; j++) {
@@ -163,7 +135,7 @@ public class SearchAgent extends Evaluable {
             } else {
                 for (int j = 0; j < path.length; j++) {
                     int k = getK(j);
-                    int id = getRandom().path[k].getId();
+                    int id = random.path[k].getId();
                     for (int i = 0; i < path.length; i++) {
                         if (id == path[i].getId()) {
                             if (isDistanceShorterWithSwap(i,j)) {

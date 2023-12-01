@@ -36,16 +36,18 @@ public class Main {
         // Initialization of the fitness class
         Fitness fitness = new Fitness(dataset);
         // Initializes whalePopulation many SearchAgents
-        SearchAgent.initializeSearchAgents(fitness, WHALE_POPULATION);
+
+        SearchAgentSet searchAgentSet = new SearchAgentSet(fitness, WHALE_POPULATION);
+
         System.out.println("-----------------------");
         for (int i = 0; i < TOTAL_ITERATION; i++) {
             if (i == 0) {
-                SearchAgent.setLeader(SearchAgent.getRandom()) ;
+                SearchAgent.setLeader(searchAgentSet.getRandom()) ;
             }
 
-            for (SearchAgent searchAgent : SearchAgent.getSearchAgents()) {
+            for (SearchAgent searchAgent : searchAgentSet) {
                 searchAgent.evaluate(i, TOTAL_ITERATION);
-                searchAgent.updateRoute(); // (3.1)
+                searchAgent.updateRoute(searchAgentSet.getRandom()); // (3.1)
                 fitness.evaluate(searchAgent, i);
             }
             SearchAgent.setLeader(fitness.getBest(i));
