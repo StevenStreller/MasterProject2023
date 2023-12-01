@@ -1,14 +1,14 @@
-package de.woa;
+package de.woa.searchagent;
 
 import com.hsh.Evaluable;
 import com.hsh.Fitness;
 import com.hsh.parser.Node;
+import de.woa.Vector;
 import de.woa.enums.VectorDefinition;
-import de.woa.exceptions.RandomNotFoundException;
 
 import java.util.*;
 
-public class SearchAgent extends Evaluable {
+public class AbstractSearchAgent extends Evaluable {
 
     private final Fitness fitness;
     private Node[] path;
@@ -25,7 +25,7 @@ public class SearchAgent extends Evaluable {
 
     private static Evaluable best;
 
-    public SearchAgent(Fitness fitness) {
+    public AbstractSearchAgent(Fitness fitness) {
         this.fitness = fitness;
 
         shufflePath();
@@ -33,8 +33,8 @@ public class SearchAgent extends Evaluable {
         this.n = path.length;
     }
 
-    protected static void setLeader(Evaluable best) {
-        SearchAgent.best = best;
+    public static void setLeader(Evaluable best) {
+        AbstractSearchAgent.best = best;
     }
 
     private void initializeVectors() {
@@ -117,7 +117,7 @@ public class SearchAgent extends Evaluable {
         return k - 1;
     }
 
-    public void updateRoute(SearchAgent random) {
+    public void updateRoute(AbstractSearchAgent random) {
         if (this.getPath().hashCode() != best.getPath().hashCode()) {
             if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
                 for (int j = 0; j < path.length; j++) {
