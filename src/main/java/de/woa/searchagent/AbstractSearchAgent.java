@@ -8,10 +8,10 @@ import de.woa.enums.VectorDefinition;
 
 import java.util.*;
 
-public class AbstractSearchAgent extends Evaluable {
+public abstract class AbstractSearchAgent extends Evaluable {
 
-    private final Fitness fitness;
-    private Node[] path;
+    protected final Fitness fitness;
+    protected Node[] path;
 
     // Path size // number of cities
     private final int n;
@@ -50,10 +50,7 @@ public class AbstractSearchAgent extends Evaluable {
     /**
      * Randomizes the order of nodes in the route
      */
-    private void shufflePath() {
-        this.path = fitness.getDataset().getNodes();
-        Collections.shuffle(Arrays.asList(path));
-    }
+    protected abstract void shufflePath();
 
     public double getP() {
         return p;
@@ -100,7 +97,7 @@ public class AbstractSearchAgent extends Evaluable {
         k = Math.abs(k);
         if (k < 1 || k > n) {
             try {
-                throw new IndexOutOfBoundsException("The value of the variable K ("+ k +") is not in the interval [1," + n + "].");
+                throw new IndexOutOfBoundsException("The value of the variable K (" + k + ") is not in the interval [1," + n + "].");
             } catch (IndexOutOfBoundsException e) {
                 System.out.println(e.getMessage());
                 k = Math.max(k, 1);
@@ -132,7 +129,7 @@ public class AbstractSearchAgent extends Evaluable {
                     int id = random.path[k].getId();
                     for (int i = 0; i < path.length; i++) {
                         if (id == path[i].getId()) {
-                            if (isDistanceShorterWithSwap(i,j)) {
+                            if (isDistanceShorterWithSwap(i, j)) {
                                 Collections.swap(Arrays.asList(path), j, i);
                             }
                             break;
@@ -169,8 +166,16 @@ public class AbstractSearchAgent extends Evaluable {
     }
 
     private boolean isDistanceShorterWithSwap(int i, int j) {
-        return calcDistance(path, i) < calcDistance(path, i , j);
+        return calcDistance(path, i) < calcDistance(path, i, j);
+    }
 
+    protected int getIndexById(int id) {
+        for (int i = 0; i < path.length; i++) {
+            if (id == path[i].getId()) {
+                return i;
+            }
+        }
+        throw new IndexOutOfBoundsException("The index could not be found.");
     }
 
     @Override
