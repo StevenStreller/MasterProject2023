@@ -1,5 +1,6 @@
 package de.woa.searchagent;
 
+import com.hsh.Evaluable;
 import com.hsh.Fitness;
 import de.woa.exceptions.DoubleInitializationNotPermittedException;
 import de.woa.exceptions.RandomNotFoundException;
@@ -11,6 +12,8 @@ import java.util.Random;
 
 
 public class SearchAgentSet<T extends AbstractSearchAgent> extends ArrayList<T> {
+
+    private Evaluable leader;
 
     public SearchAgentSet(Class<T> searchAgentClass, Fitness fitness, int population) throws DoubleInitializationNotPermittedException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         if (!this.isEmpty()) {
@@ -31,5 +34,12 @@ public class SearchAgentSet<T extends AbstractSearchAgent> extends ArrayList<T> 
         return random;
     }
 
+    public void setLeader(Evaluable evaluable) {
+        this.leader = evaluable;
+    }
 
+
+    public Evaluable getLeader() {
+        return leader;
+    }
 }

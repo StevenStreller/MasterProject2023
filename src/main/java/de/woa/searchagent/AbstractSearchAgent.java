@@ -23,18 +23,12 @@ public class AbstractSearchAgent extends Evaluable {
     // Vectors
     private final HashMap<VectorDefinition, Vector> vectors = new HashMap<>();
 
-    private static Evaluable best;
-
     public AbstractSearchAgent(Fitness fitness) {
         this.fitness = fitness;
 
         shufflePath();
         initializeVectors();
         this.n = path.length;
-    }
-
-    public static void setLeader(Evaluable best) {
-        AbstractSearchAgent.best = best;
     }
 
     private void initializeVectors() {
@@ -74,11 +68,11 @@ public class AbstractSearchAgent extends Evaluable {
         return pathIndex;
     }
 
-    private double getD() {
+    private double getD(Evaluable leader) {
         Vector dLeader = new Vector();
         Vector p = new Vector();
-        for (int i = 0; i < best.getPath().size(); i++) {
-            dLeader.add((double) best.getPath().get(i));
+        for (int i = 0; i < leader.getPath().size(); i++) {
+            dLeader.add((double) leader.getPath().get(i));
             p.add((double) this.getPath().get(i));
         }
 
@@ -89,11 +83,11 @@ public class AbstractSearchAgent extends Evaluable {
     }
 
 
-    private int getK(int j) {
+    private int getK(int j, Evaluable leader) {
         int k;
         if (getP() < 0.5 && vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
             double b = 1; //TODO b muss noch herausgefunden werden
-            double D = getD();
+            double D = getD(leader);
             double innerTerm = D * Math.pow(Math.E, (b * l)) * Math.cos(2 * Math.PI * l) + j;
             k = (int) Math.floor(innerTerm); // (3.3) with Leader
             k += (int) Math.floor((innerTerm) / n); // (3.3) with Leader
@@ -117,12 +111,12 @@ public class AbstractSearchAgent extends Evaluable {
         return k - 1;
     }
 
-    public void updateRoute(AbstractSearchAgent random) {
-        if (this.getPath().hashCode() != best.getPath().hashCode()) {
+    public void updateRoute(AbstractSearchAgent random, Evaluable leader) {
+        if (this.getPath().hashCode() != leader.getPath().hashCode()) {
             if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
                 for (int j = 0; j < path.length; j++) {
-                    int k = getK(j);
-                    int id = best.getPath().get(k);
+                    int k = getK(j, leader);
+                    int id = leader.getPath().get(k);
                     for (int i = 0; i < path.length; i++) {
                         if (id == path[i].getId()) {
                             if (isDistanceShorterWithSwap(i, j)) {
@@ -134,7 +128,7 @@ public class AbstractSearchAgent extends Evaluable {
                 }
             } else {
                 for (int j = 0; j < path.length; j++) {
-                    int k = getK(j);
+                    int k = getK(j, leader);
                     int id = random.path[k].getId();
                     for (int i = 0; i < path.length; i++) {
                         if (id == path[i].getId()) {
