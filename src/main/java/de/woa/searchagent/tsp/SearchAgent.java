@@ -1,6 +1,5 @@
 package de.woa.searchagent.tsp;
 
-
 import com.hsh.Fitness;
 import de.woa.searchagent.AbstractSearchAgent;
 
@@ -17,4 +16,10 @@ public class SearchAgent extends AbstractSearchAgent {
         this.path = fitness.getDataset().getNodes();
         Collections.shuffle(Arrays.asList(path));
     }
+
+    @Override
+    protected boolean isDistanceShorterWithSwapAndConstraintCompliant(int i, int j) {
+        return calcDistance(path, i) < calcDistance(path, i, j);
+    }
+
 }

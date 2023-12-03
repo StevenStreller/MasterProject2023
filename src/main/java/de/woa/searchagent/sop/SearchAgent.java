@@ -19,9 +19,7 @@ public class SearchAgent extends AbstractSearchAgent {
     protected void shufflePath() {
         this.path = fitness.getDataset().getNodes();
         Collections.shuffle(Arrays.asList(path));
-
         while (!fitness.validate(Arrays.stream(path).mapToInt(Node::getId).toArray()).isValid()) {
-
             for (int i = 0; i < path.length; i++) {
                 ArrayList<Integer> constraints = path[i].getConstraints();
                 for (int cId : constraints) {
@@ -33,4 +31,19 @@ public class SearchAgent extends AbstractSearchAgent {
             }
         }
     }
+
+    @Override
+    protected boolean isDistanceShorterWithSwapAndConstraintCompliant(int i, int j) {
+        if (calcDistance(path, i) < calcDistance(path, i, j)) {
+            int[] tempPath = Arrays.stream(path).mapToInt(Node::getId).toArray();
+            int temp = tempPath[i];
+            tempPath[i] = tempPath[j];
+            tempPath[j] = temp;
+            return fitness.validate(tempPath).isValid();
+        }
+
+        return false;
+    }
+
+
 }

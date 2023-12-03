@@ -80,7 +80,7 @@ public abstract class AbstractSearchAgent extends Evaluable {
     }
 
 
-    private int getK(int j, Evaluable leader) {
+    protected int getK(int j, Evaluable leader) {
         int k;
         if (getP() < 0.5 && vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
             double b = 1; //TODO b muss noch herausgefunden werden
@@ -116,7 +116,7 @@ public abstract class AbstractSearchAgent extends Evaluable {
                     int id = leader.getPath().get(k);
                     for (int i = 0; i < path.length; i++) {
                         if (id == path[i].getId()) {
-                            if (isDistanceShorterWithSwap(i, j)) {
+                            if (isDistanceShorterWithSwapAndConstraintCompliant(i, j)) {
                                 Collections.swap(Arrays.asList(path), j, i);
                             }
                             break;
@@ -129,7 +129,7 @@ public abstract class AbstractSearchAgent extends Evaluable {
                     int id = random.path[k].getId();
                     for (int i = 0; i < path.length; i++) {
                         if (id == path[i].getId()) {
-                            if (isDistanceShorterWithSwap(i, j)) {
+                            if (isDistanceShorterWithSwapAndConstraintCompliant(i, j)) {
                                 Collections.swap(Arrays.asList(path), j, i);
                             }
                             break;
@@ -140,11 +140,11 @@ public abstract class AbstractSearchAgent extends Evaluable {
         }
     }
 
-    private double calcDistance(Node[] nodes, int index) {
+    protected double calcDistance(Node[] nodes, int index) {
         return calculateDistance(nodes, index, nodes[index]);
     }
 
-    private double calcDistance(Node[] nodes, int index, int newNeighbor) {
+    protected double calcDistance(Node[] nodes, int index, int newNeighbor) {
         return calculateDistance(nodes, index, nodes[newNeighbor]);
     }
 
@@ -165,9 +165,7 @@ public abstract class AbstractSearchAgent extends Evaluable {
         return leftNeighbor.distance(node) + node.distance(rightNeighbor);
     }
 
-    private boolean isDistanceShorterWithSwap(int i, int j) {
-        return calcDistance(path, i) < calcDistance(path, i, j);
-    }
+    protected abstract boolean isDistanceShorterWithSwapAndConstraintCompliant(int i, int j);
 
     protected int getIndexById(int id) {
         for (int i = 0; i < path.length; i++) {
