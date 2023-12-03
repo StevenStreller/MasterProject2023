@@ -4,3 +4,12 @@ services:
     build: .
     volumes:
       - ./heuristic.csv:/heuristic.csv:/
+      - ./src/main/resources/tsp:/tsp
+      - ./src/main/resources/sop:/sop
+    environment:
+#      - FIRST_ARGUMENT=generateHeuristic=/tsp
+#      - FIRST_ARGUMENT=generateHeuristic=/sop
+#      - FIRST_ARGUMENT=tsp/a280.tsp
+      - FIRST_ARGUMENT=generateHeuristic=/tsp
+      - TOTAL_ITERATIONS=0
+      - WHALE_POPULATION=0

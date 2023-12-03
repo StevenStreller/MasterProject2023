@@ -61,18 +61,21 @@ public class Main {
             for (int iterations = 200; iterations <= 1000; iterations += 100) {
                 TOTAL_ITERATION = iterations;
                 for (int agents = 20; agents <= 100; agents += 20) {
-                    WHALE_POPULATION = agents;
-                    runWhaleOptimizationAlgorithm(directory.getPath() + "/" + Objects.requireNonNull(directory.list())[i]);
+                    if(Parser.read(directory.getPath() + "/" + Objects.requireNonNull(directory.list())[i]).getSize() <= 1000) {
+                        WHALE_POPULATION = agents;
+                        runWhaleOptimizationAlgorithm(directory.getPath() + "/" + Objects.requireNonNull(directory.list())[i]);
 
-                    // A separate FileWriter for each iteration
-                    FileWriter dataFileWriter = new FileWriter(file, true);
-                    BufferedWriter bufferedWriter = new BufferedWriter(dataFileWriter);
+                        // A separate FileWriter for each iteration
+                        FileWriter dataFileWriter = new FileWriter(file, true);
+                        BufferedWriter bufferedWriter = new BufferedWriter(dataFileWriter);
 
-                    int improvement = (fitness.getBest(0).getFitness() - fitness.getBest(TOTAL_ITERATION - 1).getFitness());
-                    bufferedWriter.write(fitness.getDataset().getSize() + "," + TOTAL_ITERATION + "," + WHALE_POPULATION + ","
-                            + improvement + "," + (improvement / TOTAL_ITERATION - 1));
-                    bufferedWriter.newLine();
-                    bufferedWriter.close();
+                        int improvement = (fitness.getBest(0).getFitness() - fitness.getBest(TOTAL_ITERATION - 1).getFitness());
+                        bufferedWriter.write(fitness.getDataset().getSize() + "," + TOTAL_ITERATION + "," + WHALE_POPULATION + ","
+                                + improvement + "," + (improvement / TOTAL_ITERATION - 1));
+                        bufferedWriter.newLine();
+                        bufferedWriter.close();
+                    }
+
                 }
             }
         }
