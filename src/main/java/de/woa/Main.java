@@ -35,14 +35,14 @@ public class Main {
         if (args.length >= 3) {
             WHALE_POPULATION = Integer.parseInt(args[2]);
         }
-        if (args.length == 1) {
-            if (args[0].contains("generateHeuristic=")) {
-                String pathToProblem = args[0].split("=")[1];
-                generateIterationHeuristic(pathToProblem);
-            }
+
+        if (args[0].contains("generateHeuristic=")) {
+            String pathToProblem = args[0].split("=")[1];
+            generateIterationHeuristic(pathToProblem);
         } else {
             runWhaleOptimizationAlgorithm(args[0]);
         }
+
 
     }
 
@@ -61,7 +61,7 @@ public class Main {
             for (int iterations = 200; iterations <= 1000; iterations += 100) {
                 TOTAL_ITERATION = iterations;
                 for (int agents = 20; agents <= 100; agents += 20) {
-                    if(Parser.read(directory.getPath() + "/" + Objects.requireNonNull(directory.list())[i]).getSize() <= 1000) {
+                    if (Parser.read(directory.getPath() + "/" + Objects.requireNonNull(directory.list())[i]).getSize() <= 1000) {
                         WHALE_POPULATION = agents;
                         runWhaleOptimizationAlgorithm(directory.getPath() + "/" + Objects.requireNonNull(directory.list())[i]);
 
@@ -92,7 +92,7 @@ public class Main {
         // Initializes whalePopulation many SearchAgents
         SearchAgentSet<? extends AbstractSearchAgent> searchAgentSet = getAgentSet(dataset, fitness);
 
-        System.out.println("\n------------------["+ dataset.getType() +"]Whale Optimization Algorithm (WOA)------------------");
+        System.out.println("\n------------------[" + dataset.getType() + "]Whale Optimization Algorithm (WOA)------------------");
         System.out.println("Total iterations: " + TOTAL_ITERATION + " \\ " + "Whale Population: " + WHALE_POPULATION);
         System.out.println("Note: You can change the number of iterations and the whale population using the second <int> and third <int> argument.");
 
@@ -115,7 +115,7 @@ public class Main {
         SearchAgentSet<? extends AbstractSearchAgent> searchAgentSet;
         if (dataset.getType().equals("TSP")) {
             searchAgentSet = new SearchAgentSet<>(de.woa.searchagent.tsp.SearchAgent.class, fitness, WHALE_POPULATION);
-        } else if (dataset.getType().equals("SOP")){
+        } else if (dataset.getType().equals("SOP")) {
             searchAgentSet = new SearchAgentSet<>(de.woa.searchagent.sop.SearchAgent.class, fitness, WHALE_POPULATION);
         } else {
             throw new IllegalArgumentException("The submitted file is neither *.tsp nor *.sop");
