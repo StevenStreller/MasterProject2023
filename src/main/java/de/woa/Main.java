@@ -60,7 +60,7 @@ public class Main {
                 System.out.println("Hint: You have overwritten the original value from the knowledge base by setting the argument TOTAL_ITERATIONS.");
             }
             if (whalePopulation != -1) {
-                closestIteration[1] = whalePopulation;
+                closestIteration[2] = whalePopulation;
                 System.out.println("Hint: You have overwritten the original value from the knowledge base by setting the argument WHALE_POPULATION.");
             }
 

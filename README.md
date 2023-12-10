@@ -24,5 +24,26 @@ Das Programm akzeptiert verschiedene Befehlszeilenargumente für die Konfigurati
 
 ## Beispielverwendung
 
+### Java
 ```bash
 java WOA.jar src/main/resources/tsp/a280.tsp TOTAL_ITERATIONS=1000 WHALE_POPULATION=50 DYNAMIC_ITERATIONS=true
+```
+### Docker
+`docker build -t woa .`
+
+`docker run -v $(pwd)/heuristic.csv:/heuristic.csv -v $(pwd)/src/main/resources/tsp:/tsp -v $(pwd)/src/main/resources/sop:/sop woa`
+
+### docker-compose.yml
+```
+version: "3.0"
+services:
+  worker:
+    build: .
+    # Examples
+    command: ["/tsp/a280.tsp", "TOTAL_ITERATIONS=50"]
+#    command: ["GENERATE_HEURISTIC=/tsp"]
+    volumes:
+      - ./heuristic.csv:/heuristic.csv
+      - ./src/main/resources/tsp:/tsp
+      - ./src/main/resources/sop:/sop
+```

@@ -15,7 +15,4 @@ COPY --from=build /home/app/target/MasterProject2023-1.0-SNAPSHOT.jar /usr/local
 COPY --from=build /home/app/src/main/resources/tsp /tsp
 COPY --from=build /home/app/src/main/resources/sop /sop
 
-ENV FIRST_ARGUMENT=""
-ENV TOTAL_ITERATIONS=""
-ENV WHALE_POPULATION=""
-ENTRYPOINT java -jar /usr/local/lib/MasterProject2023-1.0-SNAPSHOT.jar ${FIRST_ARGUMENT}
+ENTRYPOINT ["java", "-jar", "/usr/local/lib/MasterProject2023-1.0-SNAPSHOT.jar"]
