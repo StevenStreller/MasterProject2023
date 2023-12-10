@@ -3,7 +3,6 @@ package de.woa.searchagent;
 
 import com.hsh.Fitness;
 import com.hsh.parser.Node;
-import de.woa.searchagent.AbstractSearchAgent;
 
 import java.util.ArrayList;
 import java.util.Arrays;

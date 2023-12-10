@@ -1,7 +1,6 @@
 package de.woa.searchagent;
 
 import com.hsh.Fitness;
-import de.woa.searchagent.AbstractSearchAgent;
 
 import java.util.Arrays;
 import java.util.Collections;
