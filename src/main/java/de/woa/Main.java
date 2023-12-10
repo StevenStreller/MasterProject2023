@@ -1,6 +1,7 @@
 package de.woa;
 
 
+import com.hsh.Evaluable;
 import com.hsh.Fitness;
 import com.hsh.parser.Dataset;
 import com.hsh.parser.Parser;
@@ -94,9 +95,10 @@ public class Main {
                 searchAgentSet.setLeader(searchAgentSet.getRandom());
             }
             AbstractSearchAgent random = searchAgentSet.getRandom();
+            Evaluable leader = searchAgentSet.getLeader();
             for (AbstractSearchAgent searchAgent : searchAgentSet) {
-                searchAgent.evaluate(i, totalIteration);
-                searchAgent.updateRoute(random, searchAgentSet.getLeader()); // (3.1)
+                searchAgent.evaluate(i, totalIteration, leader);
+                searchAgent.updateRoute(random, leader); // (3.1)
                 fitness.evaluate(searchAgent, i);
             }
             searchAgentSet.setLeader(fitness.getBest(i));

@@ -16,6 +16,19 @@ public abstract class AbstractSearchAgent extends Evaluable {
     // Path size // number of cities
     private final int n;
 
+    // performance var
+    private double cosInnerTerm = 0;
+
+    // performance var
+    private double D = 0;
+
+    // performance var
+    private double absA = 0;
+
+    private int aInnerTerm = 0;
+
+    private final double  b = 1;
+
     // Doubles
     private double p = Math.random();
     private double l = Math.random() * 2 - 1;
@@ -38,13 +51,17 @@ public abstract class AbstractSearchAgent extends Evaluable {
         vectors.put(VectorDefinition.A, vectors.get(VectorDefinition.r).scalarMultiply(2).scalarMultiply(smallA).scalarAddition(-smallA));
     }
 
-    public void evaluate(int currentIteration, int totalIteration) {
+    public void evaluate(int currentIteration, int totalIteration, Evaluable leader) {
         double smallA = 2 - 2 * ((double) currentIteration / totalIteration);
         vectors.replace(VectorDefinition.r, Vector.generateRandomVector(fitness.getDataset().getSize())); // Muss r geupdatet werden?
         vectors.replace(VectorDefinition.C, vectors.get(VectorDefinition.r).scalarMultiply(2d));
         vectors.replace(VectorDefinition.A, vectors.get(VectorDefinition.r).scalarMultiply(2).scalarMultiply(smallA).scalarAddition(-smallA));
         l = Math.random() * 2 - 1;
         p = Math.random();
+        D = getD(leader);
+        cosInnerTerm = Math.pow(Math.E, (b * l)) * Math.cos(2 * Math.PI * l);
+        absA = vectors.get(VectorDefinition.A).getAbsoluteValue();
+        aInnerTerm = (int) (vectors.get(VectorDefinition.C).divide(vectors.get(VectorDefinition.A)).scalarMultiply(n).getAbsoluteValue());
     }
 
     /**
@@ -82,16 +99,13 @@ public abstract class AbstractSearchAgent extends Evaluable {
 
     protected int getK(int j, Evaluable leader) {
         int k;
-        if (getP() < 0.5 && vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
-            double b = 1; //TODO b muss noch herausgefunden werden
-            double D = getD(leader);
-            double innerTerm = D * Math.pow(Math.E, (b * l)) * Math.cos(2 * Math.PI * l) + j;
+        if (getP() > 0.5) {
+            double innerTerm = D * cosInnerTerm + j;
             k = (int) Math.floor(innerTerm); // (3.3) with Leader
             k += (int) Math.floor((innerTerm) / n); // (3.3) with Leader
             k += 1;
-
         } else {
-            int x = j + (int) (vectors.get(VectorDefinition.C).divide(vectors.get(VectorDefinition.A)).scalarMultiply(n).getAbsoluteValue());
+            int x = j + aInnerTerm;
             k = x - n * (x / n) + 1;
         }
         k = Math.abs(k);
@@ -110,7 +124,7 @@ public abstract class AbstractSearchAgent extends Evaluable {
 
     public void updateRoute(AbstractSearchAgent random, Evaluable leader) {
         if (this.getPath().hashCode() != leader.getPath().hashCode()) {
-            if (vectors.get(VectorDefinition.A).getAbsoluteValue() < 1) {
+            if (absA < 1 || getP() > 0.5) {
                 for (int j = 0; j < path.length; j++) {
                     int k = getK(j, leader);
                     int id = leader.getPath().get(k);
@@ -125,7 +139,7 @@ public abstract class AbstractSearchAgent extends Evaluable {
                 }
             } else {
                 for (int j = 0; j < path.length; j++) {
-                    int k = getK(j, leader);
+                    int k = getK(j, random);
                     int id = random.path[k].getId();
                     for (int i = 0; i < path.length; i++) {
                         if (id == path[i].getId()) {
