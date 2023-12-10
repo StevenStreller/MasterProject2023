@@ -1,4 +1,4 @@
-package de.woa.searchagent.sop;
+package de.woa.searchagent;
 
 
 import com.hsh.Fitness;
@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class SearchAgent extends AbstractSearchAgent {
+public class SopAgent extends AbstractSearchAgent {
 
-    public SearchAgent(Fitness fitness) {
+    public SopAgent(Fitness fitness) {
         super(fitness);
     }
 

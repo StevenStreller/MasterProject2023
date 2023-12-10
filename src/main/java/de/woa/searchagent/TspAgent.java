@@ -1,4 +1,4 @@
-package de.woa.searchagent.tsp;
+package de.woa.searchagent;
 
 import com.hsh.Fitness;
 import de.woa.searchagent.AbstractSearchAgent;
@@ -6,8 +6,8 @@ import de.woa.searchagent.AbstractSearchAgent;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class SearchAgent extends AbstractSearchAgent {
-    public SearchAgent(Fitness fitness) {
+public class TspAgent extends AbstractSearchAgent {
+    public TspAgent(Fitness fitness) {
         super(fitness);
     }
 

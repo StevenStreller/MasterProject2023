@@ -8,6 +8,8 @@ import de.woa.exceptions.DoubleInitializationNotPermittedException;
 import de.woa.exceptions.RandomNotFoundException;
 import de.woa.searchagent.AbstractSearchAgent;
 import de.woa.searchagent.SearchAgentSet;
+import de.woa.searchagent.SopAgent;
+import de.woa.searchagent.TspAgent;
 
 
 import java.io.BufferedWriter;
@@ -105,9 +107,9 @@ public class Main {
     private static SearchAgentSet<? extends AbstractSearchAgent> getAgentSet(Dataset dataset, Fitness fitness, int whalePopulation) throws DoubleInitializationNotPermittedException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         SearchAgentSet<? extends AbstractSearchAgent> searchAgentSet;
         if (dataset.getType().equals("TSP")) {
-            searchAgentSet = new SearchAgentSet<>(de.woa.searchagent.tsp.SearchAgent.class, fitness, whalePopulation);
+            searchAgentSet = new SearchAgentSet<>(TspAgent.class, fitness, whalePopulation);
         } else if (dataset.getType().equals("SOP")) {
-            searchAgentSet = new SearchAgentSet<>(de.woa.searchagent.sop.SearchAgent.class, fitness, whalePopulation);
+            searchAgentSet = new SearchAgentSet<>(SopAgent.class, fitness, whalePopulation);
         } else {
             throw new IllegalArgumentException("The submitted file is neither *.tsp nor *.sop");
         }
