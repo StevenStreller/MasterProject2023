@@ -30,17 +30,42 @@ public class Main {
             throw new IllegalArgumentException("Please set the path to the *.tsp");
         }
 
-        if (args[0].contains("generateHeuristic=")) {
-            String pathToProblem = args[0].split("=")[1];
-            generateIterationHeuristic(pathToProblem);
+        String directoryPathToProblems = null;
+        int totalIterations = -1;
+        int whalePopulation = -1;
+        boolean hasDynamicIteration = false;
+
+        for (String arg : args) {
+            if (arg.toLowerCase().matches("total_iterations=\\d+")) {
+                totalIterations = Integer.parseInt(arg.toLowerCase().split("=")[1]);
+            } else if (arg.toLowerCase().matches("whale_population=\\d+")) {
+                whalePopulation = Integer.parseInt(arg.toLowerCase().split("=")[1]);
+            } else if (arg.toLowerCase().matches("generate_heuristic=.+")) {
+                directoryPathToProblems = arg.toLowerCase().split("=")[1];
+            } else if (arg.toLowerCase().matches("dynamic_iterations=true")) {
+                hasDynamicIteration = true;
+            }
+        }
+
+        if (directoryPathToProblems != null) {
+            generateIterationHeuristic(directoryPathToProblems);
         } else {
             Dataset dataset = Parser.read(args[0]);
             int[] closestIteration = IterationCalculator.findClosest(dataset.getSize());
             assert closestIteration != null;
             System.out.println("We have found a similar problem in our knowledge base. We found that for a number of " + closestIteration[0] + " cities, the number of iterations "+ closestIteration[1] +" and the whale population of " + closestIteration[2] + " is the best.");
+
+            if (totalIterations != -1) {
+                closestIteration[1] = totalIterations;
+                System.out.println("Hint: You have overwritten the original value from the knowledge base by setting the argument TOTAL_ITERATIONS.");
+            }
+            if (whalePopulation != -1) {
+                closestIteration[1] = whalePopulation;
+                System.out.println("Hint: You have overwritten the original value from the knowledge base by setting the argument WHALE_POPULATION.");
+            }
+
             runWhaleOptimizationAlgorithm(dataset, closestIteration[1], closestIteration[2]);
         }
-
 
     }
 
