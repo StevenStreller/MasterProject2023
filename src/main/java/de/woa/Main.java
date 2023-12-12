@@ -43,6 +43,7 @@ public class Main {
             } else if (arg.toLowerCase().matches("generate_heuristic=.+")) {
                 directoryPathToProblems = arg.toLowerCase().split("=")[1];
             } else if (arg.toLowerCase().matches("dynamic_iterations=true")) {
+                System.out.println("Hint: Du hast die dynamische Iteration aktiviert.");
                 hasDynamicIteration = true;
             }
         }
@@ -64,7 +65,7 @@ public class Main {
                 System.out.println("Hint: You have overwritten the original value from the knowledge base by setting the argument WHALE_POPULATION.");
             }
 
-            runWhaleOptimizationAlgorithm(dataset, closestIteration[1], closestIteration[2]);
+            runWhaleOptimizationAlgorithm(dataset, closestIteration[1], closestIteration[2], hasDynamicIteration);
         }
 
     }
@@ -84,7 +85,7 @@ public class Main {
             for (int iterations = 200; iterations <= 1000; iterations += 100) {
                 for (int agents = 20; agents <= 100; agents += 20) {
                     if (Parser.read(directory.getPath() + "/" + Objects.requireNonNull(directory.list())[i]).getSize() <= 1000) {
-                        runWhaleOptimizationAlgorithm(Parser.read(directory.getPath() + "/" + Objects.requireNonNull(directory.list())[i]), iterations, agents);
+                        runWhaleOptimizationAlgorithm(Parser.read(directory.getPath() + "/" + Objects.requireNonNull(directory.list())[i]), iterations, agents, false);
 
                         // A separate FileWriter for each iteration
                         FileWriter dataFileWriter = new FileWriter(file, true);
@@ -104,7 +105,7 @@ public class Main {
         fr.close();
     }
 
-    private static void runWhaleOptimizationAlgorithm(Dataset dataset, int totalIteration, int whalePopulation) throws DoubleInitializationNotPermittedException, RandomNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    private static void runWhaleOptimizationAlgorithm(Dataset dataset, int totalIteration, int whalePopulation, boolean dynamicIteration) throws DoubleInitializationNotPermittedException, RandomNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         // Initialization of the fitness class
         fitness = new Fitness(dataset);
@@ -127,6 +128,20 @@ public class Main {
                 fitness.evaluate(searchAgent, i);
             }
             searchAgentSet.setLeader(fitness.getBest(i));
+
+            if (dynamicIteration) {
+                if (i == totalIteration -1) {
+                    int fifteenPercent = (int) (totalIteration * 0.15);
+                    int j = totalIteration - fifteenPercent;
+                    int best = fitness.getBest(j).getFitness();
+                    for (; j < totalIteration; j++) {
+                        if (best > fitness.getBest(j).getFitness()) {
+                            totalIteration += fifteenPercent;
+                            break;
+                        }
+                    }
+                }
+            }
         }
         fitness.finish();
     }
