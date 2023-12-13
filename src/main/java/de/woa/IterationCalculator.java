@@ -1,15 +1,16 @@
 package de.woa;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Objects;
 
 public class IterationCalculator {
 
     public static int[] findClosest(int target) {
-        String csvFilePath = "heuristic_result.csv";
+        String csvFilePath = "/heuristic_result.csv";
         char csvDelimiter = ';';
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(IterationCalculator.class.getResourceAsStream(csvFilePath))))) {
             String line;
             int[] arrayFirstColumn = new int[0];
             int[] arraySecondColumn = new int[0];

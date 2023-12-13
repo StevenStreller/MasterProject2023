@@ -33,7 +33,7 @@ public class Main {
         String directoryPathToProblems = null;
         int totalIterations = -1;
         int whalePopulation = -1;
-        boolean hasDynamicIteration = false;
+        boolean hasDynamicIteration = true;
 
         for (String arg : args) {
             if (arg.toLowerCase().matches("total_iterations=\\d+")) {
@@ -42,9 +42,9 @@ public class Main {
                 whalePopulation = Integer.parseInt(arg.toLowerCase().split("=")[1]);
             } else if (arg.toLowerCase().matches("generate_heuristic=.+")) {
                 directoryPathToProblems = arg.toLowerCase().split("=")[1];
-            } else if (arg.toLowerCase().matches("dynamic_iterations=true")) {
-                System.out.println("Hint: Du hast die dynamische Iteration aktiviert.");
-                hasDynamicIteration = true;
+            } else if (arg.toLowerCase().matches("dynamic_iterations=false")) {
+                System.out.println("Hint: Du hast die dynamische Iteration deaktiviert.");
+                hasDynamicIteration = false;
             }
         }
 
@@ -109,11 +109,12 @@ public class Main {
 
         // Initialization of the fitness class
         fitness = new Fitness(dataset);
+        int fifteenPercent = (int) (totalIteration * 0.15);
 
         // Initializes whalePopulation many SearchAgents
         SearchAgentSet<? extends AbstractSearchAgent> searchAgentSet = getAgentSet(dataset, fitness, whalePopulation);
 
-        System.out.println("\n------------------[" + dataset.getType() + "]Whale Optimization Algorithm (WOA)------------------");
+        System.out.println("\n------------------[" + dataset.getType() + "] Whale Optimization Algorithm (WOA)------------------");
         System.out.println("Total iterations: " + totalIteration + " \\ " + "Whale Population: " + whalePopulation);
 
         for (int i = 0; i < totalIteration; i++) {
@@ -131,7 +132,6 @@ public class Main {
 
             if (dynamicIteration) {
                 if (i == totalIteration -1) {
-                    int fifteenPercent = (int) (totalIteration * 0.15);
                     int j = totalIteration - fifteenPercent;
                     int best = fitness.getBest(j).getFitness();
                     for (; j < totalIteration; j++) {
