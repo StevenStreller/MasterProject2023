@@ -92,7 +92,7 @@ public class Main {
                         BufferedWriter bufferedWriter = new BufferedWriter(dataFileWriter);
 
                         int improvement = (fitness.getBest(0).getFitness() - fitness.getBest(iterations - 1).getFitness());
-                        bufferedWriter.write(fitness.getDataset().getSize() + "," + agents + "," + agents + ","
+                        bufferedWriter.write(fitness.getDataset().getSize() + "," + iterations + "," + agents + ","
                                 + improvement + "," + (improvement / iterations - 1));
                         bufferedWriter.newLine();
                         bufferedWriter.close();
