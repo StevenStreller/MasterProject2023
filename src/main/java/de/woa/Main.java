@@ -43,7 +43,7 @@ public class Main {
             } else if (arg.toLowerCase().matches("generate_heuristic=.+")) {
                 directoryPathToProblems = arg.toLowerCase().split("=")[1];
             } else if (arg.toLowerCase().matches("dynamic_iterations=false")) {
-                System.out.println("Hint: Du hast die dynamische Iteration deaktiviert.");
+                System.out.println("Hint: You have deactivated dynamic iteration.");
                 hasDynamicIteration = false;
             }
         }
