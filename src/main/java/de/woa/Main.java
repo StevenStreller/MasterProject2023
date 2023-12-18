@@ -33,7 +33,7 @@ public class Main {
         String directoryPathToProblems = null;
         int totalIterations = -1;
         int whalePopulation = -1;
-        boolean hasDynamicIteration = true;
+        boolean hasDynamicIteration = false;
 
         for (String arg : args) {
             if (arg.toLowerCase().matches("total_iterations=\\d+")) {
@@ -42,9 +42,9 @@ public class Main {
                 whalePopulation = Integer.parseInt(arg.toLowerCase().split("=")[1]);
             } else if (arg.toLowerCase().matches("generate_heuristic=.+")) {
                 directoryPathToProblems = arg.toLowerCase().split("=")[1];
-            } else if (arg.toLowerCase().matches("dynamic_iterations=false")) {
-                System.out.println("Hint: You have deactivated dynamic iteration.");
-                hasDynamicIteration = false;
+            } else if (arg.toLowerCase().matches("dynamic_iterations=true")) {
+                System.out.println("Hint: You have activated dynamic iteration.");
+                hasDynamicIteration = true;
             }
         }
 
