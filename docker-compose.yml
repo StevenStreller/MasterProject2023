@@ -1,0 +1,11 @@
+version: "3.7"
+services:
+  worker:
+    build: .
+    # Examples
+#    command: ["/tsp/a280.tsp", "TOTAL_ITERATIONS=50"]
+    command: ["GENERATE_HEURISTIC=/tsp"]
+    volumes:
+      - ./src/main/resources/heuristic.csv:/heuristic.csv
+      - ./src/main/resources/tsp:/tsp
+      - ./src/main/resources/sop:/sop
